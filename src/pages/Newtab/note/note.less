@@ -21,7 +21,7 @@
     background: @note-bg;
     cursor: pointer;
     margin: 0 0 15px 0;
-    padding: 20px 30px;
+    padding: 10px 30px;
     transition: opacity 0.4s ease-in-out;
     display: inline-block;
   }
@@ -31,7 +31,9 @@
   position: relative;
 }
 
-textarea.textarea-note {
+@note-edit-font-size: 15px;
+@note-edit-line-height: 20px;
+textarea.note-textarea {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   display: block;
   resize: none;
@@ -39,15 +41,29 @@ textarea.textarea-note {
   outline: 0;
   width: 100%;
   color: inherit;
-  font-size: 15px;
+  font-size: @note-edit-font-size;
   background-color: @note-bg;
-  line-height: 20px;
+  line-height: @note-edit-line-height;
+}
+input.note-input {
+  background-color: transparent;
+  border: none;
+  font-family: @font-thin;
+  font-size: @note-edit-font-size + 5px;
+  line-height: @note-edit-line-height;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+  color: #00000052;
+}
+input::placeholder {
+  color: #4a48482b;
 }
 
 span.close {
   display: none;
   position: absolute;
-  top: -15px;
+  top: -5px;
   right: -22px;
   background-color: #6e6e6e29;
   border-radius: 15px;

@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Dialog = ({show, hide, footer = null, children}) => {
+const Dialog = ({visible, hide, footer = null, children}) => {
 
-    return show && (
+    return visible && (
         <div className="dialog-wrapper">
             <div className="dialog">
                 <div className="header">
@@ -10,7 +10,7 @@ const Dialog = ({show, hide, footer = null, children}) => {
                 </div>
                 {children}
                 {footer && (
-                    <div className="footer">
+                    <div className="control">
                         {footer}
                     </div>
                 )}

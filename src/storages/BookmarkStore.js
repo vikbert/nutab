@@ -1,7 +1,7 @@
 import {logBookmarks} from "../helpers/Logger";
 import store from 'store';
 
-const BookmarkStore = {key: 'kitabs_bookmarks'};
+const BookmarkStore = {key: 'nutab_bookmarks'};
 
 BookmarkStore.importBookmarks = (nodes) => {
     let cache = [];

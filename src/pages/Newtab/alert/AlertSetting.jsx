@@ -14,7 +14,7 @@ const AlertSetting = ({startAlert = () => null}) => {
 
     return (
         <>
-            <Dialog show={visible} hide={hide}>
+            <Dialog visible={visible} hide={hide}>
                 <form onSubmit={handleSubmit} className={'alert-setting'}>
                     <input type={'number'}
                            autoFocus={true}

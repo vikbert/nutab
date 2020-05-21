@@ -1,6 +1,6 @@
 const store = require('store');
 const todoStore = {
-    key: 'kitabs_todos',
+    key: 'nutab_todos',
 };
 
 todoStore.loadTodos = () => {

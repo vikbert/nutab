@@ -1,6 +1,6 @@
 const store = require('store');
 const noteStore = {
-  key: 'kitabs_notes',
+  key: 'nutab_notes',
 };
 
 noteStore.loadAll = () => {

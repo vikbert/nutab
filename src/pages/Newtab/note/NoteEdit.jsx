@@ -4,7 +4,7 @@ import noteStore from "../../../storages/NoteStore";
 const NoteEdit = ({note}) => {
     const textRef = useRef();
     const [content, setContent] = useState(note.content || '');
-    const [title, setTitle] = useState(note.title || (new Date()).toLocaleDateString());
+    const [title, setTitle] = useState(note.title || '');
     const [textRows, setTextRows] = useState(3);
 
     const handleSubmitNote = (event) => {

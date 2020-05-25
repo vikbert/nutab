@@ -23,7 +23,7 @@ const NoteForm = () => {
       handleSubmitNote();
     }
   };
-  
+
   useEffect(() => {
     textRef.current.focus();
   }, []);
@@ -36,7 +36,7 @@ const NoteForm = () => {
         onChange={handleChangeText}
         onKeyPress={handleKeyPress}
         placeholder="Enter your note"
-        rows="5"
+        rows="20"
       />
 
       <div className="button-container">

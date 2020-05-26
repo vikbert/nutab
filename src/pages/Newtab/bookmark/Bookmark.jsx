@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Cells, CellsTitle, Cell, CellBody, CellFooter } from 'react-weui';
 import BookmarkStore from '../../../storages/BookmarkStore';
 import useResize from '../../../hooks/useResize';
+import Search from '../../../components/Search/Search';
 
 const Bookmark = ({ active }) => {
   const [bookmarks, setBookmarks] = useState([]);
@@ -10,11 +11,7 @@ const Bookmark = ({ active }) => {
   const bookmarkRootRef = useRef();
   const { width } = useResize(bookmarkRootRef);
 
-  const handleChangeSearch = (event) => {
-    const searchString = event.target.value.toLowerCase();
-
-    setSearchText(searchString);
-
+  const handleChangeSearch = (searchString) => {
     if (searchString.length >= 2) {
       BookmarkStore.filterBookmarks(searchString, setBookmarks);
     } else {
@@ -22,16 +19,9 @@ const Bookmark = ({ active }) => {
     }
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      const googleQuery = searchText.split(' ').join('+');
-      loadUrl(`https://www.google.de/search?q=${googleQuery}`);
-    }
-  };
-
-  const handleOnBlur = () => {
-    // setSearchText('');
-    // setBookmarks([]);
+  const handlePressEnter = (searchString) => {
+    const googleQuery = searchString.split(' ').join('+');
+    loadUrl(`https://www.google.de/search?q=${googleQuery}`);
   };
 
   const loadUrl = (url) => {
@@ -45,20 +35,10 @@ const Bookmark = ({ active }) => {
 
   return (
     <div className={'bookmark fade-in'} ref={bookmarkRootRef}>
-      <div className="search">
-        <div className="input-wrapper">
-          <span className="icon-search1" />
-          <input
-            type="text"
-            placeholder={'Search in Bookmark and web'}
-            className={'search'}
-            value={searchText}
-            onBlur={handleOnBlur}
-            onChange={handleChangeSearch}
-            onKeyPress={handleKeyPress}
-          />
-        </div>
-      </div>
+      <Search
+        changeCallback={(text) => handleChangeSearch(text)}
+        submitCallback={(text) => handlePressEnter(text)}
+      />
 
       <div
         className={'list-container'}

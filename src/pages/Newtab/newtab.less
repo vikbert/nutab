@@ -1,6 +1,6 @@
 .newTab {
   display: flex;
-  background: url("../../assets/img/bg3.jpg") no-repeat;
+  background: url('../../assets/img/bg3.jpg') no-repeat;
   background-size: cover;
   width: 100vw;
   color: #4a4a4a;
@@ -12,7 +12,8 @@
   }
 }
 
-.right, .left {
+.right,
+.left {
   margin-bottom: -5000px;
   padding-bottom: 5000px;
 }
@@ -24,6 +25,8 @@
 .left {
   position: relative;
   flex-grow: 1;
+  display: grid;
+  grid-template-rows: 64px 142px 1fr 10px;
 }
 
 .alert {

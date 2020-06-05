@@ -6,8 +6,6 @@ import Search from '../../../components/Search/Search';
 
 const Bookmark = ({ active }) => {
   const [bookmarks, setBookmarks] = useState([]);
-  const [searchText, setSearchText] = useState('');
-
   const bookmarkRootRef = useRef();
   const { width } = useResize(bookmarkRootRef);
 
@@ -34,14 +32,14 @@ const Bookmark = ({ active }) => {
   }, []);
 
   return (
-    <div className={'bookmark fade-in'} ref={bookmarkRootRef}>
+    <div className="bookmark-container" ref={bookmarkRootRef}>
       <Search
         changeCallback={(text) => handleChangeSearch(text)}
         submitCallback={(text) => handlePressEnter(text)}
       />
 
       <div
-        className={'list-container'}
+        className="list-container"
         style={{
           display: bookmarks.length ? 'block' : 'none',
           width: `${width - 28}px`,
@@ -49,7 +47,7 @@ const Bookmark = ({ active }) => {
       >
         <CellsTitle>
           <span>Found</span>
-          <span className={'result-amount'}>{bookmarks.length}</span>
+          <span className="result-amount">{bookmarks.length}</span>
           <span>Entries</span>
         </CellsTitle>
         <Cells>

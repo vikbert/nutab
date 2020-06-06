@@ -120,9 +120,7 @@ const Todo = () => {
     }
 
     if (toggle.searchActive && newTodo.length >= 2) {
-      keys = keys.filter((key) =>
-        todos[key].title.toLowerCase().includes(newTodo.toLowerCase())
-      );
+      keys = keys.filter((key) => todos[key].title.toLowerCase().includes(newTodo.toLowerCase()));
     }
 
     switch (control.filter) {
@@ -136,9 +134,7 @@ const Todo = () => {
   };
 
   const starredTodoKeys = filterTodos().filter((key) => todos[key].starred);
-  const normalTodoKeys = filterTodos().filter(
-    (key) => todos[key].starred === false
-  );
+  const normalTodoKeys = filterTodos().filter((key) => todos[key].starred === false);
 
   useEffect(() => {
     newTodoRef.current.focus();
@@ -162,29 +158,18 @@ const Todo = () => {
           Max. 3x starred Todos !!!
         </Toptips>
         <header className="header">
-          <span
-            className={
-              toggle.searchActive
-                ? 'icon-search1 icon-search1--header'
-                : 'icon-plus1'
-            }
-          />
+          <span className={toggle.searchActive ? 'icon-search1 icon-search1--header' : 'icon-plus1'} />
           <input
             ref={newTodoRef}
             autoFocus={true}
             type="text"
-            placeholder={
-              toggle.searchActive ? 'Type for search ...' : 'Add a new todo ...'
-            }
+            placeholder={toggle.searchActive ? 'Type for search ...' : 'Add a new todo ...'}
             value={newTodo}
             onChange={handleChangeNewTodoInput}
             onKeyPress={handlePressKeyInputField}
             className="new-todo"
           />
-          <span
-            className={toggle.searchActive ? 'icon-x' : 'icon-search1'}
-            onClick={toggleSearchMode}
-          />
+          <span className={toggle.searchActive ? 'icon-x' : 'icon-search1'} onClick={toggleSearchMode} />
         </header>
         <main className="main">
           <ul className="todo-list">
@@ -198,10 +183,7 @@ const Todo = () => {
             ))}
             <li className={'category category-inbox'}>
               <label>
-                <span
-                  className="icon icon-drawer2"
-                  style={{ paddingLeft: 0 }}
-                />
+                <span className="icon icon-drawer2" style={{ paddingLeft: 0 }} />
               </label>
             </li>
             {normalTodoKeys.map((key) => (
@@ -226,9 +208,7 @@ const Todo = () => {
             <ul className={'filters'}>
               <li>
                 <a
-                  className={
-                    control.filter === FILTER.all ? 'selected' : undefined
-                  }
+                  className={control.filter === FILTER.all ? 'selected' : undefined}
                   href={'#/' + FILTER.all}
                   onClick={() => setControl({ ...control, filter: FILTER.all })}
                 >
@@ -238,26 +218,18 @@ const Todo = () => {
 
               <li>
                 <a
-                  className={
-                    control.filter === FILTER.active ? 'selected' : undefined
-                  }
+                  className={control.filter === FILTER.active ? 'selected' : undefined}
                   href={'#/' + FILTER.active}
-                  onClick={() =>
-                    setControl({ ...control, filter: FILTER.active })
-                  }
+                  onClick={() => setControl({ ...control, filter: FILTER.active })}
                 >
                   Active ({control.countActive || 0})
                 </a>
               </li>
               <li>
                 <a
-                  className={
-                    control.filter === FILTER.completed ? 'selected' : undefined
-                  }
+                  className={control.filter === FILTER.completed ? 'selected' : undefined}
                   href={'#/' + FILTER.completed}
-                  onClick={() =>
-                    setControl({ ...control, filter: FILTER.completed })
-                  }
+                  onClick={() => setControl({ ...control, filter: FILTER.completed })}
                 >
                   Completed ({control.countAll - control.countActive || 0})
                 </a>

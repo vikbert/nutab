@@ -27,6 +27,7 @@ const INIT_CONTROL = {
 
 const Todo = () => {
   const [todos, setTodos] = useState({});
+  const [order, setOrder] = useState([]);
   const [newTodo, setNewTodo] = useState('');
   const [toggle, setToggle] = useState(INIT_TOGGLE);
   const [control, setControl] = useState(INIT_CONTROL);
@@ -43,12 +44,16 @@ const Todo = () => {
     };
   };
 
-  const __saveTodosInStateAndStore = (updatedList) => {
+  const __saveTodosInStateAndStore = (updatedList, updatedOrder = []) => {
     const { countAll, countActive } = __countTodos(updatedList);
     setControl({ ...control, countAll, countActive });
     setTodos(updatedList);
+    setOrder(updatedOrder);
 
-    todoStore.saveTodos(updatedList);
+    todoStore.saveTodos({
+      todos: updatedList,
+      order: updatedOrder,
+    });
   };
 
   const toggleSearchMode = () => {
@@ -82,8 +87,9 @@ const Todo = () => {
 
     const newObject = TodoFactory.create(newTodo);
     const updatedList = { [newObject.id]: newObject, ...todos };
+    const updatedOrder = [newObject.id, ...order];
 
-    __saveTodosInStateAndStore(updatedList);
+    __saveTodosInStateAndStore(updatedList, updatedOrder);
   };
 
   const handleClickDeleteCompleted = () => {
@@ -96,21 +102,22 @@ const Todo = () => {
       }
     });
 
-    __saveTodosInStateAndStore(activeTodos);
+    __saveTodosInStateAndStore(activeTodos, order);
   };
 
   const callbackUpdateTodo = (todo) => {
     const updatedList = { ...todos };
     updatedList[todo.id] = todo;
 
-    __saveTodosInStateAndStore(updatedList);
+    __saveTodosInStateAndStore(updatedList, order);
   };
 
   const callbackDeleteTodo = (todo) => {
     const updatedList = { ...todos };
     delete updatedList[todo.id];
+    const updatedOrder = order.filter((id) => id !== todo.id);
 
-    __saveTodosInStateAndStore(updatedList);
+    __saveTodosInStateAndStore(updatedList, updatedOrder);
   };
 
   const filterTodos = () => {
@@ -141,8 +148,16 @@ const Todo = () => {
   }, [toggle.searchActive]);
 
   useEffect(() => {
-    const todos = todoStore.loadTodos();
+    const { todos, order } = todoStore.loadTodos();
+    const { countActive } = __countTodos(todos);
+    console.log(countActive);
     setTodos(todos);
+    setOrder(order);
+    setControl({
+      ...control,
+      countAll: order.length,
+      countActive,
+    });
   }, []);
 
   return (
@@ -181,11 +196,11 @@ const Todo = () => {
                 deleteTodoCallback={(todo) => callbackDeleteTodo(todo)}
               />
             ))}
-            <li className={'category category-inbox'}>
+            {/* <li className={'category category-inbox'}>
               <label>
                 <span className="icon icon-drawer2" style={{ paddingLeft: 0 }} />
               </label>
-            </li>
+            </li> */}
             {normalTodoKeys.map((key) => (
               <TodoItem
                 key={todos[key].id}

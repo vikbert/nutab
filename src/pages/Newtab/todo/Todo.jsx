@@ -15,7 +15,6 @@ const FILTER = {
 };
 
 const INIT_TOGGLE = {
-  searchActive: false,
   slideActive: true,
   toptipActive: false,
 };
@@ -27,7 +26,6 @@ const INIT_CONTROL = {
 
 const Todo = () => {
   const [todos, setTodos] = useState({});
-  const [order, setOrder] = useState([]);
   const [newTodo, setNewTodo] = useState('');
   const [toggle, setToggle] = useState(INIT_TOGGLE);
   const [control, setControl] = useState(INIT_CONTROL);
@@ -44,21 +42,11 @@ const Todo = () => {
     };
   };
 
-  const __saveTodosInStateAndStore = (updatedList, updatedOrder = []) => {
+  const __saveTodosInStateAndStore = (updatedList) => {
     const { countAll, countActive } = __countTodos(updatedList);
     setControl({ ...control, countAll, countActive });
     setTodos(updatedList);
-    setOrder(updatedOrder);
-
-    todoStore.saveTodos({
-      todos: updatedList,
-      order: updatedOrder,
-    });
-  };
-
-  const toggleSearchMode = () => {
-    setToggle({ ...toggle, searchActive: !toggle.searchActive });
-    setNewTodo('');
+    todoStore.saveTodos(updatedList);
   };
 
   const toggleToptip = () => {
@@ -74,7 +62,7 @@ const Todo = () => {
   };
 
   const handlePressKeyInputField = (e) => {
-    if (e.key !== 'Enter' || toggle.searchActive) {
+    if (e.key !== 'Enter') {
       return null;
     }
 
@@ -87,9 +75,8 @@ const Todo = () => {
 
     const newObject = TodoFactory.create(newTodo);
     const updatedList = { [newObject.id]: newObject, ...todos };
-    const updatedOrder = [newObject.id, ...order];
 
-    __saveTodosInStateAndStore(updatedList, updatedOrder);
+    __saveTodosInStateAndStore(updatedList);
   };
 
   const handleClickDeleteCompleted = () => {
@@ -102,32 +89,27 @@ const Todo = () => {
       }
     });
 
-    __saveTodosInStateAndStore(activeTodos, order);
+    __saveTodosInStateAndStore(activeTodos);
   };
 
   const callbackUpdateTodo = (todo) => {
     const updatedList = { ...todos };
     updatedList[todo.id] = todo;
 
-    __saveTodosInStateAndStore(updatedList, order);
+    __saveTodosInStateAndStore(updatedList);
   };
 
   const callbackDeleteTodo = (todo) => {
     const updatedList = { ...todos };
     delete updatedList[todo.id];
-    const updatedOrder = order.filter((id) => id !== todo.id);
 
-    __saveTodosInStateAndStore(updatedList, updatedOrder);
+    __saveTodosInStateAndStore(updatedList);
   };
 
   const filterTodos = () => {
     let keys = Object.keys(todos);
     if (keys.length === 0) {
       return [];
-    }
-
-    if (toggle.searchActive && newTodo.length >= 2) {
-      keys = keys.filter((key) => todos[key].title.toLowerCase().includes(newTodo.toLowerCase()));
     }
 
     switch (control.filter) {
@@ -145,19 +127,18 @@ const Todo = () => {
 
   useEffect(() => {
     newTodoRef.current.focus();
-  }, [toggle.searchActive]);
+  }, []);
 
   useEffect(() => {
     const { todos, order } = todoStore.loadTodos();
     const { countActive } = __countTodos(todos);
-    console.log(countActive);
     setTodos(todos);
-    setOrder(order);
     setControl({
       ...control,
-      countAll: order.length,
+      countAll: Object.keys(todos).length,
       countActive,
     });
+    console.log('current filter ---------- ', control.filter);
   }, []);
 
   return (
@@ -170,21 +151,20 @@ const Todo = () => {
       />
       <div className="todoapp">
         <Toptips show={toggle.toptipActive} type={'warn'}>
-          Max. 3x starred Todos !!!
+          Fokusieren max. nur 3x wichtigste Aufgabe !!! Get them Done !!!
         </Toptips>
         <header className="header">
-          <span className={toggle.searchActive ? 'icon-search1 icon-search1--header' : 'icon-plus1'} />
+          <span className={'icon-plus1'} />
           <input
             ref={newTodoRef}
             autoFocus={true}
             type="text"
-            placeholder={toggle.searchActive ? 'Type for search ...' : 'Add a new todo ...'}
+            placeholder={'Add a new todo ...'}
             value={newTodo}
             onChange={handleChangeNewTodoInput}
             onKeyPress={handlePressKeyInputField}
             className="new-todo"
           />
-          <span className={toggle.searchActive ? 'icon-x' : 'icon-search1'} onClick={toggleSearchMode} />
         </header>
         <main className="main">
           <ul className="todo-list">

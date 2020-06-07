@@ -10,6 +10,7 @@ const TodoItem = ({ item, updateTodoCallback, deleteTodoCallback, showToptip = (
   const toggleChecked = (event) => {
     const newTodo = { ...todo, completed: event.target.checked };
     setTodo(newTodo);
+    updateTodoCallback(newTodo);
   };
 
   const toggleStarred = () => {
@@ -20,12 +21,14 @@ const TodoItem = ({ item, updateTodoCallback, deleteTodoCallback, showToptip = (
 
     const newTodo = { ...todo, starred: !todo.starred };
     setTodo(newTodo);
+    updateTodoCallback(newTodo);
   };
 
   const updateTitle = (newTitle) => {
     const newTodo = { ...todo, title: newTitle };
     setEditing(false);
     setTodo(newTodo);
+    updateTodoCallback(newTodo);
   };
 
   const removeTodo = () => {
@@ -35,10 +38,6 @@ const TodoItem = ({ item, updateTodoCallback, deleteTodoCallback, showToptip = (
   const handleDoubleClick = () => {
     setEditing(true);
   };
-
-  useEffect(() => {
-    updateTodoCallback(todo);
-  }, [todo]);
 
   let itemView;
   if (editing) {

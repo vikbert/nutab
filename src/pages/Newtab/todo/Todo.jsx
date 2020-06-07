@@ -8,7 +8,6 @@ import { loadTodos, saveTodos, saveOrder, saveFilter, loadFilter } from '../../.
 import TodoConfig from './TodoConfig';
 import useVisible from '../../../hooks/useVisible';
 import Confirm from '../../../components/Confirm';
-import ChromeApiHelper from '../../../helpers/ChromeApiHelper';
 
 const FILTER = {
   all: 'all',
@@ -28,7 +27,7 @@ const INIT_CONTROL = {
 
 const Todo = () => {
   const [todos, setTodos] = useState({});
-  const [order, setOrder] = useState({});
+  const [order, setOrder] = useState({ all: [], active: [] });
   const [newTodo, setNewTodo] = useState('');
   const [toggle, setToggle] = useState(INIT_TOGGLE);
   const [control, setControl] = useState(INIT_CONTROL);
@@ -168,6 +167,9 @@ const Todo = () => {
   };
 
   const getOrderedIdsByFilter = () => {
+    if (!order) {
+      return [];
+    }
     let keys = Object.keys(todos);
     if (keys.length === 0) {
       return [];
@@ -215,7 +217,6 @@ const Todo = () => {
 
   useEffect(() => {
     saveFilter(control.filter);
-    ChromeApiHelper.reloadCurrentTab();
   }, [control]);
 
   return (

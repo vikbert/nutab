@@ -7,7 +7,6 @@ import Note from './note';
 import Setting from './setting';
 
 const NewTab = () => {
-  console.log('rerender: ' + Date.now());
   return (
     <div className={'newTab fade-in'}>
       <div className="left">

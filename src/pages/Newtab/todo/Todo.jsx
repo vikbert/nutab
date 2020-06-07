@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import dragula from 'react-dragula';
 import classnames from 'classnames';
 import TodoItem from './TodoItem';
 import { Toptips } from 'react-weui';
 import TodoFactory from './TodoFactory';
-import todoStore from '../../../storages/TodoStore';
+import { loadTodos, saveTodos, saveOrder } from '../../../storages/TodoStore';
 import TodoConfig from './TodoConfig';
 import useVisible from '../../../hooks/useVisible';
 import Confirm from '../../../components/Confirm';
@@ -26,12 +27,14 @@ const INIT_CONTROL = {
 
 const Todo = () => {
   const [todos, setTodos] = useState({});
+  const [order, setOrder] = useState({});
   const [newTodo, setNewTodo] = useState('');
   const [toggle, setToggle] = useState(INIT_TOGGLE);
   const [control, setControl] = useState(INIT_CONTROL);
   const { visible, show, hide } = useVisible(false);
 
   const newTodoRef = useRef(null);
+  const todosRef = useRef(null);
 
   const __countTodos = (updatedList) => {
     const allKeys = Object.keys(updatedList);
@@ -40,13 +43,6 @@ const Todo = () => {
       countAll: allKeys.length,
       countActive: allKeys.filter((key) => !updatedList[key].completed).length,
     };
-  };
-
-  const __saveTodosInStateAndStore = (updatedList) => {
-    const { countAll, countActive } = __countTodos(updatedList);
-    setControl({ ...control, countAll, countActive });
-    setTodos(updatedList);
-    todoStore.saveTodos(updatedList);
   };
 
   const toggleToptip = () => {
@@ -59,6 +55,15 @@ const Todo = () => {
   const handleChangeNewTodoInput = (event) => {
     const inputValue = event.target.value;
     setNewTodo(inputValue.trimLeft());
+  };
+
+  const __saveTodosInStateAndStore = (updatedList, updatedOrder) => {
+    const { countAll, countActive } = __countTodos(updatedList);
+    setControl({ ...control, countAll, countActive });
+    setTodos(updatedList);
+    setOrder(updatedOrder);
+
+    saveTodos(updatedList, updatedOrder);
   };
 
   const handlePressKeyInputField = (e) => {
@@ -75,71 +80,139 @@ const Todo = () => {
 
     const newObject = TodoFactory.create(newTodo);
     const updatedList = { [newObject.id]: newObject, ...todos };
+    const updatedOrder = {
+      ...order,
+      all: [newObject.id, ...order.all],
+      active: [newObject.id, ...order.active],
+    };
 
-    __saveTodosInStateAndStore(updatedList);
+    __saveTodosInStateAndStore(updatedList, updatedOrder);
   };
 
-  const handleClickDeleteCompleted = () => {
-    setControl({ ...control, filter: FILTER.all });
+  const handleDeleteAllCompleted = () => {
+    const updatedTodos = { ...todos };
+    let updatedOrderAll = [...order.all];
+    let updatedOrderActive = [...order.active];
 
-    const activeTodos = { ...todos };
-    Object.keys(activeTodos).forEach((key) => {
-      if (activeTodos[key].completed) {
-        delete activeTodos[key];
+    Object.keys(updatedTodos).forEach((key) => {
+      if (updatedTodos[key].completed) {
+        delete updatedTodos[key];
+
+        updatedOrderAll = updatedOrderAll.filter((id) => {
+          return id !== parseInt(key);
+        });
+        updatedOrderActive = updatedOrderActive.filter((id) => {
+          return id !== parseInt(key);
+        });
       }
     });
 
-    __saveTodosInStateAndStore(activeTodos);
+    const updatedOrder = {
+      ...order,
+      all: updatedOrderAll,
+      active: updatedOrderActive,
+    };
+
+    __saveTodosInStateAndStore(updatedTodos, updatedOrder);
   };
 
-  const callbackUpdateTodo = (todo) => {
+  const callbackUpdateTodo = (newTodo) => {
     const updatedList = { ...todos };
-    updatedList[todo.id] = todo;
+    const updatedOrderAll = [...order.all];
+    const updatedOrderActive = [...order.active];
+    // if completed chagned
+    if (newTodo.completed !== updatedList[newTodo.id].completed) {
+      if (newTodo.completed) {
+        updatedOrderActive.forEach((item, index, object) => {
+          if (item === newTodo.id) {
+            object.splice(index, 1);
+          }
+        });
+      } else {
+        updatedOrderActive.unshift(newTodo.id);
+      }
+    }
 
-    __saveTodosInStateAndStore(updatedList);
+    updatedList[newTodo.id] = newTodo;
+
+    __saveTodosInStateAndStore(updatedList, {
+      ...order,
+      all: updatedOrderAll,
+      active: updatedOrderActive,
+    });
   };
 
   const callbackDeleteTodo = (todo) => {
     const updatedList = { ...todos };
     delete updatedList[todo.id];
 
-    __saveTodosInStateAndStore(updatedList);
+    const updatedOrderAll = [...order.all];
+    const updatedOrderActive = [...order.active];
+    updatedOrderActive.forEach((item, index, object) => {
+      if (item === todo.id) {
+        object.splice(index, 1);
+      }
+    });
+    updatedOrderAll.forEach((item, index, object) => {
+      if (item === todo.id) {
+        object.splice(index, 1);
+      }
+    });
+
+    __saveTodosInStateAndStore(updatedList, {
+      ...order,
+      all: updatedOrderAll,
+      active: updatedOrderActive,
+    });
   };
 
-  const filterTodos = () => {
+  const getOrderedIdsByFilter = () => {
     let keys = Object.keys(todos);
     if (keys.length === 0) {
       return [];
     }
 
-    switch (control.filter) {
-      case FILTER.completed:
-        return keys.filter((key) => todos[key].completed);
-      case FILTER.active:
-        return keys.filter((key) => todos[key].completed === false);
-      default:
-        return keys;
+    if (control.filter === 'active') {
+      return order.active;
     }
+
+    return order.all;
   };
 
-  const starredTodoKeys = filterTodos().filter((key) => todos[key].starred);
-  const normalTodoKeys = filterTodos().filter((key) => todos[key].starred === false);
+  const starredTodoKeys = getOrderedIdsByFilter().filter((key) => todos[key].starred);
+  const normalTodoKeys = getOrderedIdsByFilter().filter((key) => todos[key].starred === false);
 
   useEffect(() => {
     newTodoRef.current.focus();
   }, []);
 
   useEffect(() => {
-    const { todos, order } = todoStore.loadTodos();
+    const { todos, order } = loadTodos();
     const { countActive } = __countTodos(todos);
+
     setTodos(todos);
+    setOrder(order);
     setControl({
       ...control,
       countAll: Object.keys(todos).length,
       countActive,
     });
-    console.log('current filter ---------- ', control.filter);
   }, []);
+
+  useEffect(() => {
+    if (Object.keys(todos).length > 0) {
+      const drake = dragula([todosRef.current]);
+      drake.on('drop', (el, target, source) => {
+        const currentFilter = target.getAttribute('data-filter');
+        const orderByFilter = Array.from(todosRef.current.children).map((child) => child.id);
+        saveOrder(orderByFilter, currentFilter);
+        setOrder({
+          ...order,
+          [currentFilter]: orderByFilter,
+        });
+      });
+    }
+  }, [todos]);
 
   return (
     <>
@@ -147,7 +220,7 @@ const Todo = () => {
         visible={visible}
         hide={hide}
         message={'Do you want to remove ALL completed todos?'}
-        confirmCallback={handleClickDeleteCompleted}
+        confirmCallback={handleDeleteAllCompleted}
       />
       <div className="todoapp">
         <Toptips show={toggle.toptipActive} type={'warn'}>
@@ -167,7 +240,7 @@ const Todo = () => {
           />
         </header>
         <main className="main">
-          <ul className="todo-list">
+          <ul className="todo-list" ref={todosRef} data-filter={control.filter}>
             {starredTodoKeys.map((key) => (
               <TodoItem
                 key={todos[key].id}
@@ -176,11 +249,6 @@ const Todo = () => {
                 deleteTodoCallback={(todo) => callbackDeleteTodo(todo)}
               />
             ))}
-            {/* <li className={'category category-inbox'}>
-              <label>
-                <span className="icon icon-drawer2" style={{ paddingLeft: 0 }} />
-              </label>
-            </li> */}
             {normalTodoKeys.map((key) => (
               <TodoItem
                 key={todos[key].id}
@@ -220,15 +288,7 @@ const Todo = () => {
                   Active ({control.countActive || 0})
                 </a>
               </li>
-              <li>
-                <a
-                  className={control.filter === FILTER.completed ? 'selected' : undefined}
-                  href={'#/' + FILTER.completed}
-                  onClick={() => setControl({ ...control, filter: FILTER.completed })}
-                >
-                  Completed ({control.countAll - control.countActive || 0})
-                </a>
-              </li>
+              <li></li>
             </ul>
             <ul className={'filters'}>
               <li>

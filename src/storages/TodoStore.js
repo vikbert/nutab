@@ -21,4 +21,12 @@ export const saveOrder = (orderByFilter, filter) => {
   saveTodos(todos, updatedOrder);
 };
 
+export const loadFilter = () => {
+  return store.get('nutab_todo_filter', 'all');
+};
+
+export const saveFilter = (filter) => {
+  store.set('nutab_todo_filter', filter);
+};
+
 export default todoStore;

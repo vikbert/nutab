@@ -4,10 +4,11 @@ import classnames from 'classnames';
 import TodoItem from './TodoItem';
 import { Toptips } from 'react-weui';
 import TodoFactory from './TodoFactory';
-import { loadTodos, saveTodos, saveOrder } from '../../../storages/TodoStore';
+import { loadTodos, saveTodos, saveOrder, saveFilter, loadFilter } from '../../../storages/TodoStore';
 import TodoConfig from './TodoConfig';
 import useVisible from '../../../hooks/useVisible';
 import Confirm from '../../../components/Confirm';
+import ChromeApiHelper from '../../../helpers/ChromeApiHelper';
 
 const FILTER = {
   all: 'all',
@@ -124,7 +125,7 @@ const Todo = () => {
     if (newTodo.completed !== updatedList[newTodo.id].completed) {
       if (newTodo.completed) {
         updatedOrderActive.forEach((item, index, object) => {
-          if (item === newTodo.id) {
+          if (item === parseInt(newTodo.id)) {
             object.splice(index, 1);
           }
         });
@@ -173,14 +174,13 @@ const Todo = () => {
     }
 
     if (control.filter === 'active') {
-      return order.active;
+      return order.all.filter((id) => !todos[id].completed);
     }
 
     return order.all;
   };
 
-  const starredTodoKeys = getOrderedIdsByFilter().filter((key) => todos[key].starred);
-  const normalTodoKeys = getOrderedIdsByFilter().filter((key) => todos[key].starred === false);
+  const filteredOrder = getOrderedIdsByFilter();
 
   useEffect(() => {
     newTodoRef.current.focus();
@@ -189,22 +189,21 @@ const Todo = () => {
   useEffect(() => {
     const { todos, order } = loadTodos();
     const { countActive } = __countTodos(todos);
-
     setTodos(todos);
     setOrder(order);
     setControl({
       ...control,
       countAll: Object.keys(todos).length,
       countActive,
+      filter: loadFilter(),
     });
   }, []);
 
   useEffect(() => {
     if (Object.keys(todos).length > 0) {
-      const drake = dragula([todosRef.current]);
-      drake.on('drop', (el, target, source) => {
+      dragula([todosRef.current]).on('drop', (el, target, source) => {
         const currentFilter = target.getAttribute('data-filter');
-        const orderByFilter = Array.from(todosRef.current.children).map((child) => child.id);
+        const orderByFilter = Array.from(todosRef.current.children).map((child) => parseInt(child.id));
         saveOrder(orderByFilter, currentFilter);
         setOrder({
           ...order,
@@ -213,6 +212,11 @@ const Todo = () => {
       });
     }
   }, [todos]);
+
+  useEffect(() => {
+    saveFilter(control.filter);
+    ChromeApiHelper.reloadCurrentTab();
+  }, [control]);
 
   return (
     <>
@@ -241,31 +245,17 @@ const Todo = () => {
         </header>
         <main className="main">
           <ul className="todo-list" ref={todosRef} data-filter={control.filter}>
-            {starredTodoKeys.map((key) => (
+            {filteredOrder.map((key) => (
               <TodoItem
                 key={todos[key].id}
                 item={todos[key]}
                 updateTodoCallback={(todo) => callbackUpdateTodo(todo)}
                 deleteTodoCallback={(todo) => callbackDeleteTodo(todo)}
-              />
-            ))}
-            {normalTodoKeys.map((key) => (
-              <TodoItem
-                key={todos[key].id}
-                item={todos[key]}
-                updateTodoCallback={(todo) => callbackUpdateTodo(todo)}
-                deleteTodoCallback={(todo) => callbackDeleteTodo(todo)}
-                numberStarred={starredTodoKeys.length}
-                showToptip={() => toggleToptip()}
               />
             ))}
           </ul>
         </main>
-        <footer
-          className={classnames('footer', {
-            shadow: normalTodoKeys.length > TodoConfig.visibleTodosLimit,
-          })}
-        >
+        <footer className={classnames('footer', { shadow: true })}>
           <div className="filter-container">
             <ul className={'filters'}></ul>
             <ul className={'filters'}>

@@ -343,3 +343,27 @@
 .filters li a.selected {
   border-color: rgba(175, 47, 47, 0.2);
 }
+.gu-mirror {
+  display: none; // work around: to have the original style from the cloned element was to difficult
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  opacity: 0.8;
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=80)';
+  filter: alpha(opacity=80);
+}
+.gu-hide {
+  display: none !important;
+}
+.gu-unselectable {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+.gu-transit {
+  border-top: 1px solid rgba(255, 140, 0, 0.43);
+  border-bottom: 1px solid rgba(255, 140, 0, 0.43);
+  background-color: rgba(255, 140, 0, 0.43);
+  font-weight: 600;
+}

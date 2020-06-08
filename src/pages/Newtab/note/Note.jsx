@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import dragula from 'react-dragula';
 import classnames from 'classnames';
 import noteStore from '../../../storages/NoteStore';
 import NoteEdit from './NoteEdit';
@@ -9,6 +10,7 @@ const Note = () => {
   const [notes, setNotes] = useState({});
   const { visible, show, hide } = useVisible(false);
   const [target, setTarget] = useState(null);
+  const listRef = useRef(null);
 
   const handleDeleteNote = (noteId) => {
     const cloned = { ...notes };
@@ -34,12 +36,18 @@ const Note = () => {
     noteStore.update(updatedNote);
   };
 
+  useEffect(() => {
+    dragula([listRef.current], { ignoreInputTextSelection: false }).on('drop', (el, target) => {
+      console.log(target);
+    });
+  }, []);
+
   const NoteEditContainer = ({ note }) => {
     return (
-      <div className={'edit'}>
+      <div className={classnames('edit', { bookmarked: note.bookmarked })}>
         <div className="edit-container">
           <NoteEdit note={note} />
-          <span className={'icon-x note-icon close'} onClick={() => openConfirm(note.id)} />
+          {!note.bookmarked && <span className={'icon-x note-icon close'} onClick={() => openConfirm(note.id)} />}
           <span
             className={classnames('icon-bookmark note-icon bookmark', { selected: note.bookmarked || false })}
             onClick={() => toggleBookmarkNote(note.id)}
@@ -69,7 +77,7 @@ const Note = () => {
               <NoteEditContainer key={noteKey} note={notes[noteKey]} />
             ))}
         </div>
-        <div className="note-bookmarked">
+        <div className="note-bookmarked" ref={listRef}>
           {Object.keys(notes)
             .filter((id) => notes[id].bookmarked)
             .map((noteKey) => (

@@ -34,6 +34,9 @@
     transition: opacity 0.4s ease-in-out;
     display: inline-block;
   }
+  .edit.bookmarked {
+    background-color: #ffec91f2;
+  }
 }
 .note-container::-webkit-scrollbar {
   width: 0 !important;
@@ -47,6 +50,7 @@
 @note-edit-line-height: 20px;
 textarea.note-textarea {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  background: transparent;
   display: block;
   resize: none;
   border: 0;
@@ -54,7 +58,6 @@ textarea.note-textarea {
   width: 100%;
   color: inherit;
   font-size: @note-edit-font-size;
-  background-color: @note-bg;
   line-height: @note-edit-line-height;
 }
 input.note-input {
@@ -93,9 +96,14 @@ span.selected {
   background-color: rgb(250, 176, 86);
   color: #ffffff;
 }
+
 span.bookmark {
   top: 28px;
 }
+span.bookmark.selected {
+  display: block;
+}
+
 span.close {
   top: -5px;
 }
@@ -105,5 +113,29 @@ span.close {
   span.close,
   span.bookmark {
     display: block;
+  }
+}
+
+.edit.bookmarked.gu-transit {
+  border: none;
+  background-color: #ffffcd;
+}
+.gu-mirror {
+  display: block;
+  background-color: rgba(253, 253, 251, 0.666);
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  opacity: 0.8;
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=80)';
+  filter: alpha(opacity=80);
+  -webkit-box-shadow: 0px 2px 31px 0px rgba(153, 147, 153, 1);
+  -moz-box-shadow: 0px 2px 31px 0px rgba(153, 147, 153, 1);
+  box-shadow: 0px 2px 31px 0px rgba(153, 147, 153, 1);
+
+  span.bookmark.selected,
+  input,
+  textarea {
+    display: none;
   }
 }

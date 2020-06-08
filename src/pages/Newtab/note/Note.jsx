@@ -5,7 +5,6 @@ import noteStore from '../../../storages/NoteStore';
 import NoteEdit from './NoteEdit';
 import useVisible from '../../../hooks/useVisible';
 import Confirm from '../../../components/Confirm';
-import useLocalStorage from '../../../hooks/useLocalStorage';
 
 const Note = () => {
   const [notes, setNotes] = useState({});

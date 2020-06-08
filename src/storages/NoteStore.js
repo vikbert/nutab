@@ -28,4 +28,12 @@ noteStore.delete = (noteId) => {
   noteStore.saveAll(notes);
 };
 
+noteStore.loadOrder = () => {
+  return store.get('nutab_notes__order', []);
+};
+
+noteStore.saveOrder = (order) => {
+  return store.set('nutab_notes__order', order);
+};
+
 export default noteStore;

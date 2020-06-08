@@ -5,11 +5,13 @@ import noteStore from '../../../storages/NoteStore';
 import NoteEdit from './NoteEdit';
 import useVisible from '../../../hooks/useVisible';
 import Confirm from '../../../components/Confirm';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 const Note = () => {
   const [notes, setNotes] = useState({});
   const { visible, show, hide } = useVisible(false);
   const [target, setTarget] = useState(null);
+  const [order, setOrder] = useState([]);
   const listRef = useRef(null);
 
   const handleDeleteNote = (noteId) => {
@@ -27,30 +29,42 @@ const Note = () => {
 
   const toggleBookmarkNote = (noteId) => {
     const updatedNote = { ...notes[noteId] };
-    updatedNote.bookmarked = !updatedNote.bookmarked;
+    const previousState = updatedNote.bookmarked;
+    // update notes
+    updatedNote.bookmarked = !previousState;
     setNotes({
       ...notes,
       [noteId]: updatedNote,
     });
-
     noteStore.update(updatedNote);
+
+    // update order
+    let newOrder;
+    if (previousState === false) {
+      newOrder = [noteId, ...order];
+    } else {
+      newOrder = order.filter((id) => id !== noteId);
+    }
+
+    setOrder(newOrder);
+    noteStore.saveOrder(newOrder);
   };
 
   useEffect(() => {
     dragula([listRef.current], { ignoreInputTextSelection: false }).on('drop', (el, target) => {
-      console.log(target);
+      noteStore.saveOrder(Array.from(listRef.current.children).map((element) => parseInt(element.id)));
     });
   }, []);
 
   const NoteEditContainer = ({ note }) => {
     return (
-      <div className={classnames('edit', { bookmarked: note.bookmarked })}>
+      <div className={classnames('edit', { bookmarked: note.bookmarked })} id={note.id}>
         <div className="edit-container">
           <NoteEdit note={note} />
           {!note.bookmarked && <span className={'icon-x note-icon close'} onClick={() => openConfirm(note.id)} />}
           <span
             className={classnames('icon-bookmark note-icon bookmark', { selected: note.bookmarked || false })}
-            onClick={() => toggleBookmarkNote(note.id)}
+            onClick={() => toggleBookmarkNote(parseInt(note.id))}
           />
         </div>
       </div>
@@ -59,6 +73,7 @@ const Note = () => {
 
   useEffect(() => {
     setNotes(noteStore.loadAll());
+    setOrder(noteStore.loadOrder());
   }, []);
 
   return (
@@ -78,11 +93,9 @@ const Note = () => {
             ))}
         </div>
         <div className="note-bookmarked" ref={listRef}>
-          {Object.keys(notes)
-            .filter((id) => notes[id].bookmarked)
-            .map((noteKey) => (
-              <NoteEditContainer key={noteKey} note={notes[noteKey]} />
-            ))}
+          {order.map((noteKey) => (
+            <NoteEditContainer key={noteKey} note={notes[noteKey]} />
+          ))}
         </div>
       </div>
     </div>

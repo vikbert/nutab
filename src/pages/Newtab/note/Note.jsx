@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import classnames from 'classnames';
 import noteStore from '../../../storages/NoteStore';
 import NoteEdit from './NoteEdit';
 import useVisible from '../../../hooks/useVisible';
@@ -17,9 +18,35 @@ const Note = () => {
     noteStore.delete(noteId);
   };
 
-  const openConfirm = (noteKey) => {
-    setTarget(noteKey);
+  const openConfirm = (noteId) => {
+    setTarget(noteId);
     show();
+  };
+
+  const toggleBookmarkNote = (noteId) => {
+    const updatedNote = { ...notes[noteId] };
+    updatedNote.bookmarked = !updatedNote.bookmarked;
+    setNotes({
+      ...notes,
+      [noteId]: updatedNote,
+    });
+
+    noteStore.update(updatedNote);
+  };
+
+  const NoteEditContainer = ({ note }) => {
+    return (
+      <div className={'edit'}>
+        <div className="edit-container">
+          <NoteEdit note={note} />
+          <span className={'icon-x note-icon close'} onClick={() => openConfirm(note.id)} />
+          <span
+            className={classnames('icon-bookmark note-icon bookmark', { selected: note.bookmarked || false })}
+            onClick={() => toggleBookmarkNote(note.id)}
+          />
+        </div>
+      </div>
+    );
   };
 
   useEffect(() => {
@@ -35,17 +62,20 @@ const Note = () => {
         message={'Are you sure to delete this note?'}
       />
       <div className="note-list">
-        {Object.keys(notes).map((noteKey) => (
-          <div key={noteKey} className={'edit'}>
-            <div className="edit-container">
-              <NoteEdit note={notes[noteKey]} />
-              <span
-                className={'icon-x close'}
-                onClick={() => openConfirm(noteKey)}
-              />
-            </div>
-          </div>
-        ))}
+        <div className="note-random">
+          {Object.keys(notes)
+            .filter((id) => !notes[id].bookmarked)
+            .map((noteKey) => (
+              <NoteEditContainer key={noteKey} note={notes[noteKey]} />
+            ))}
+        </div>
+        <div className="note-bookmarked">
+          {Object.keys(notes)
+            .filter((id) => notes[id].bookmarked)
+            .map((noteKey) => (
+              <NoteEditContainer key={noteKey} note={notes[noteKey]} />
+            ))}
+        </div>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ const NoteEdit = ({ note }) => {
   const textRef = useRef();
   const [content, setContent] = useState(note.content || '');
   const [title, setTitle] = useState(note.title || '');
+  const [starred, setStarred] = useState(false);
   const [textRows, setTextRows] = useState(1);
 
   const handleSubmitNote = (event) => {

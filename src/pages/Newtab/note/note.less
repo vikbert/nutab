@@ -13,6 +13,15 @@
     column-width: 320px;
     column-gap: 15px;
     width: 95%;
+    display: grid;
+    grid-template-columns: 50% 50%;
+  }
+  .note-bookmarked {
+    background: transparent;
+  }
+
+  .note-random {
+    background: transparent;
   }
 
   .edit {
@@ -64,10 +73,9 @@ input::placeholder {
   color: #4a48482b;
 }
 
-span.close {
+span.note-icon {
   display: none;
   position: absolute;
-  top: -5px;
   right: -22px;
   background-color: #6e6e6e29;
   border-radius: 15px;
@@ -78,12 +86,24 @@ span.close {
 
   &:hover {
     color: darkorange;
+    background-color: #6e6e6e29;
   }
+}
+span.selected {
+  background-color: rgb(250, 176, 86);
+  color: #ffffff;
+}
+span.bookmark {
+  top: 28px;
+}
+span.close {
+  top: -5px;
 }
 
 // hove: show delete icons
 .edit:hover {
-  span.close {
+  span.close,
+  span.bookmark {
     display: block;
   }
 }

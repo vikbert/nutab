@@ -1,5 +1,6 @@
 @note-bg: rgb(255, 255, 205);
 .note-container {
+  margin-top: -10px;
   overflow: scroll;
   position: relative;
   height: 700px;
@@ -9,20 +10,32 @@
   }
 
   .note-insert {
-    color: #ffffff82;
-    width: 100px;
-    font-size: 2rem;
+    color: #ffffffa7;
+    background-color: #ffffff3d;
+    width: 34px;
+    font-size: 34px;
+    height: 34px;
     font-weight: 700;
-    padding: 0 0 0 25px;
+    padding: 8px;
+    border-radius: 50%;
+    margin: 0 auto;
     cursor: pointer;
+    &:hover {
+      background-color: darkorange;
+      color: #ffffff;
+    }
   }
   .note-list {
     margin: 0 auto;
-    column-width: 320px;
-    column-gap: 15px;
-    width: 95%;
+    /* column-width: 320px; */
+    /* column-gap: 15px; */
+    /* width: 95%; */
     display: grid;
     grid-template-columns: 50% 50%;
+  }
+  .note-bookmarked,
+  .note-random {
+    text-align: center;
   }
   .note-bookmarked {
     background: transparent;
@@ -33,6 +46,7 @@
   }
 
   .edit {
+    width: 95%;
     text-decoration: none;
     color: #000;
     background: @note-bg;

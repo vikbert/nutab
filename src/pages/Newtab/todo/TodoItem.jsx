@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import classnames from 'classnames';
 import TodoTextInput from './TodoTextInput';
-import TodoConfig from './TodoConfig';
 
 const TodoItem = ({ item, updateTodoCallback, deleteTodoCallback, showToptip = () => null, numberStarred = 0 }) => {
   const [todo, setTodo] = useState(item);
@@ -14,11 +13,6 @@ const TodoItem = ({ item, updateTodoCallback, deleteTodoCallback, showToptip = (
   };
 
   const toggleStarred = () => {
-    if (numberStarred === TodoConfig.starredLimit) {
-      showToptip();
-      return;
-    }
-
     const newTodo = { ...todo, starred: !todo.starred };
     setTodo(newTodo);
     updateTodoCallback(newTodo);

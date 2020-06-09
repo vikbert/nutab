@@ -229,7 +229,7 @@ const Todo = () => {
       />
       <div className="todoapp">
         <Toptips show={toggle.toptipActive} type={'warn'}>
-          Fokusieren max. nur 3x wichtigste Aufgabe !!! Get them Done !!!
+          {`Fokusieren max. nur ${TodoConfig.starredLimit}x wichtigste Aufgabe !!! Get them Done !!!`}
         </Toptips>
         <header className="header">
           <span className={'icon-plus1'} />
@@ -252,6 +252,7 @@ const Todo = () => {
                 item={todos[key]}
                 updateTodoCallback={(todo) => callbackUpdateTodo(todo)}
                 deleteTodoCallback={(todo) => callbackDeleteTodo(todo)}
+                numberStarred={filteredOrder.length}
               />
             ))}
           </ul>

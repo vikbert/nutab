@@ -13,6 +13,19 @@ const Note = () => {
   const [order, setOrder] = useState([]);
   const listRef = useRef(null);
 
+  const handleInsertEmptyNote = () => {
+    const updatedNotes = {
+      [Date.now()]: {
+        id: Date.now(),
+        title: '',
+        content: '',
+        bookmarked: false,
+      },
+      ...notes,
+    };
+    setNotes(updatedNotes);
+    noteStore.saveAll(updatedNotes);
+  };
   const handleDeleteNote = (noteId) => {
     const cloned = { ...notes };
     delete cloned[noteId];
@@ -83,6 +96,7 @@ const Note = () => {
         confirmCallback={() => handleDeleteNote(target)}
         message={'Are you sure to delete this note?'}
       />
+      <div className="icon icon-plus1 note-insert" onClick={handleInsertEmptyNote} />
       <div className="note-list">
         <div className="note-random">
           {Object.keys(notes)

@@ -18,6 +18,7 @@ export const saveOrder = (orderByFilter, filter) => {
     ...order,
     [filter]: orderByFilter,
   };
+  console.log('updated order: active', updatedOrder.active);
   saveTodos(todos, updatedOrder);
 };
 

@@ -20,37 +20,32 @@ const INIT_TOGGLE = {
   toptipActive: false,
 };
 
-const INIT_CONTROL = {
-  filter: FILTER.active,
-  countActive: 0,
+const __countTodos = (updatedList) => {
+  const allKeys = Object.keys(updatedList);
+
+  return {
+    countAll: allKeys.length,
+    countActive: allKeys.filter((key) => !updatedList[key].completed).length,
+  };
 };
 
 const Todo = () => {
-  const [todos, setTodos] = useState({});
-  const [order, setOrder] = useState({ all: [], active: [] });
+  const { todos: initTodos, order: initOrder } = loadTodos();
+  const { countActive } = __countTodos(initTodos);
+
+  const [todos, setTodos] = useState(initTodos);
+  const [order, setOrder] = useState(initOrder);
   const [newTodo, setNewTodo] = useState('');
   const [toggle, setToggle] = useState(INIT_TOGGLE);
-  const [control, setControl] = useState(INIT_CONTROL);
+  const [control, setControl] = useState({
+    countAll: Object.keys(todos).length,
+    countActive,
+    filter: loadFilter(),
+  });
   const { visible, show, hide } = useVisible(false);
 
   const newTodoRef = useRef(null);
   const todosRef = useRef(null);
-
-  const __countTodos = (updatedList) => {
-    const allKeys = Object.keys(updatedList);
-
-    return {
-      countAll: allKeys.length,
-      countActive: allKeys.filter((key) => !updatedList[key].completed).length,
-    };
-  };
-
-  const toggleToptip = () => {
-    setToggle({ ...toggle, toptipActive: true });
-    setTimeout(() => {
-      setToggle({ ...toggle, toptipActive: false });
-    }, 3000);
-  };
 
   const handleChangeNewTodoInput = (event) => {
     const inputValue = event.target.value;
@@ -183,22 +178,10 @@ const Todo = () => {
   };
 
   const filteredOrder = getOrderedIdsByFilter();
+  console.log('final filtered:', filteredOrder);
 
   useEffect(() => {
     newTodoRef.current.focus();
-  }, []);
-
-  useEffect(() => {
-    const { todos, order } = loadTodos();
-    const { countActive } = __countTodos(todos);
-    setTodos(todos);
-    setOrder(order);
-    setControl({
-      ...control,
-      countAll: Object.keys(todos).length,
-      countActive,
-      filter: loadFilter(),
-    });
   }, []);
 
   useEffect(() => {
@@ -213,10 +196,8 @@ const Todo = () => {
           [currentFilter]: orderByFilter,
         });
       });
-
-      drake.destroy();
     }
-  }, [todos]);
+  }, []);
 
   useEffect(() => {
     saveFilter(control.filter);
@@ -274,22 +255,16 @@ const Todo = () => {
                 </a>
               </li>
 
-              <li>
-                <a
-                  className={control.filter === FILTER.active ? 'selected' : undefined}
-                  href={'#/' + FILTER.active}
-                  onClick={() => setControl({ ...control, filter: FILTER.active })}
-                >
-                  Active ({control.countActive || 0})
-                </a>
-              </li>
+              <li></li>
               <li></li>
             </ul>
             <ul className={'filters'}>
               <li>
-                <a href="#/clean-all-completed" onClick={show}>
-                  Clean all completed
-                </a>
+                {control.countAll !== control.countActive && (
+                  <a href="#/clean-all-completed" onClick={show}>
+                    {`Clean all ${control.countAll - control.countActive}x completed tasks`}
+                  </a>
+                )}
               </li>
             </ul>
           </div>

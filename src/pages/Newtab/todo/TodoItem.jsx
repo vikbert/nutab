@@ -44,7 +44,7 @@ const TodoItem = ({ item, updateTodoCallback, deleteTodoCallback, showToptip = (
     );
   } else {
     itemView = (
-      <div className="view" id={todo.id} data-id={todo.id}>
+      <div className="view">
         <input
           className="toggle"
           type="checkbox"

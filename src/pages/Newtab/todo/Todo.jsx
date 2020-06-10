@@ -202,8 +202,9 @@ const Todo = () => {
   }, []);
 
   useEffect(() => {
+    const drake = dragula([todosRef.current]);
     if (Object.keys(todos).length > 0) {
-      dragula([todosRef.current]).on('drop', (el, target, source) => {
+      drake.on('drop', (el, target, source) => {
         const currentFilter = target.getAttribute('data-filter');
         const orderByFilter = Array.from(todosRef.current.children).map((child) => parseInt(child.id));
         saveOrder(orderByFilter, currentFilter);
@@ -212,6 +213,8 @@ const Todo = () => {
           [currentFilter]: orderByFilter,
         });
       });
+
+      drake.destroy();
     }
   }, [todos]);
 

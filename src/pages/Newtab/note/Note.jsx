@@ -6,6 +6,7 @@ import useVisible from '../../../hooks/useVisible';
 import Confirm from '../../../components/Confirm';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import NoteManager from '../../../storages/NoteManager';
+import createEmptyNote from '../../../storages/NewNote';
 const initNotes = {
   notes: {
     byId: {},
@@ -23,12 +24,7 @@ const Note = () => {
   const listRef = useRef(null);
 
   const handleInsertEmptyNote = () => {
-    noteManager.addNote({
-      id: Date.now(),
-      title: '',
-      content: '',
-      bookmarked: false,
-    });
+    noteManager.addNote(createEmptyNote());
     setNoteData(noteManager.getData());
   };
 

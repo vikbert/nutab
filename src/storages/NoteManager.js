@@ -1,6 +1,14 @@
 class NoteManager {
-  constructor(noteData) {
-    if (noteData) {
+  constructor(initData) {
+    let noteData = { ...initData };
+    if (Object.keys(noteData).length === 0) {
+      noteData = {
+        notes: {
+          byId: {},
+          all: [],
+          bookmarked: [],
+        },
+      };
     }
     if (!noteData.hasOwnProperty('notes')) {
       throw new Error('note data has no propery: [notes]');

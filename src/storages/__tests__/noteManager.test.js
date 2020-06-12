@@ -93,22 +93,8 @@ describe('NoteManager', () => {
   });
 
   it('setAll(ids)', () => {
-    const ids = ['11', '22', '44'];
-    expect(() => {
-      manager.setAll(ids);
-    }).toThrow();
-  });
-
-  it('setAll(ids)', () => {
     const ids = ['11', '33', '22'];
     manager.setAll(ids);
-  });
-
-  it('setBookmarked(ids)', () => {
-    const ids = ['11', '44'];
-    expect(() => {
-      manager.setBookmarked(ids);
-    }).toThrow();
   });
 
   it('setBookmarked(ids)', () => {

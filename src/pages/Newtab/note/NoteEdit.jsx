@@ -1,19 +1,20 @@
 import React, { useRef, useState, useEffect } from 'react';
-import noteStore from '../../../storages/NoteStore';
 
-const NoteEdit = ({ note }) => {
+const NoteEdit = ({ note, updateCallback }) => {
   const textRef = useRef();
   const [content, setContent] = useState(note.content || '');
   const [title, setTitle] = useState(note.title || '');
-  const [starred, setStarred] = useState(false);
   const [textRows, setTextRows] = useState(1);
-
-  const handleSubmitNote = (event) => {
-    noteStore.update({ ...note, content: content, title: title });
-  };
 
   const handleChangeText = (event) => {
     setContent(event.target.value);
+  };
+
+  const handleKeyPressForSubmit = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      const updatedNote = { ...note, content: content, title: title };
+      updateCallback(updatedNote);
+    }
   };
 
   useEffect(() => {
@@ -31,16 +32,15 @@ const NoteEdit = ({ note }) => {
         value={title}
         placeholder={'Title'}
         onChange={(event) => setTitle(event.target.value)}
-        onBlur={handleSubmitNote}
+        onKeyPress={handleKeyPressForSubmit}
       />
-
       <textarea
         className={'note-textarea'}
         ref={textRef}
         value={content}
-        onChange={handleChangeText}
-        onBlur={handleSubmitNote}
         rows={textRows}
+        onChange={handleChangeText}
+        onKeyPress={handleKeyPressForSubmit}
       />
     </>
   );

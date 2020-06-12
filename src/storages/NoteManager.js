@@ -1,5 +1,7 @@
 class NoteManager {
   constructor(noteData) {
+    if (noteData) {
+    }
     if (!noteData.hasOwnProperty('notes')) {
       throw new Error('note data has no propery: [notes]');
     }
@@ -17,6 +19,10 @@ class NoteManager {
     }
 
     this.data = JSON.parse(JSON.stringify(noteData));
+  }
+
+  getData() {
+    return this.data;
   }
 
   countBookmarked() {
@@ -95,7 +101,7 @@ class NoteManager {
 
   addNote(note) {
     // add note to byId {}
-    const idString = note.id.toString();
+    const idString = note.id;
     this.data.notes.byId[idString] = note;
 
     // add ID to all[]
@@ -108,17 +114,10 @@ class NoteManager {
   }
 
   setBookmarked(ids) {
+    console.log('setBookmarked', ids);
     // be sure keys is an Array
     if (!Array.isArray(ids)) {
       throw new Error('Given Keys is not an Array!');
-    }
-
-    const notes = this.data.notes;
-    const existingBookmarked = this.data.notes.all.filter((key) => notes.byId[key].bookmarked);
-    if (existingBookmarked.sort().toString() !== [...ids].sort().toString()) {
-      throw new Error(
-        `IDs should not be changed, exclude their order. [${existingBookmarked.toString()}] vs [${ids.toString()}]`
-      );
     }
 
     this.data.notes.bookmarked = ids;

@@ -178,7 +178,6 @@ const Todo = () => {
   };
 
   const filteredOrder = getOrderedIdsByFilter();
-  console.log('final filtered:', filteredOrder);
 
   useEffect(() => {
     newTodoRef.current.focus();

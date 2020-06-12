@@ -1,37 +1,45 @@
 import React, { useEffect, useState, useRef } from 'react';
 import dragula from 'react-dragula';
 import classnames from 'classnames';
-import noteStore from '../../../storages/NoteStore';
 import NoteEdit from './NoteEdit';
 import useVisible from '../../../hooks/useVisible';
 import Confirm from '../../../components/Confirm';
-
+import useLocalStorage from '../../../hooks/useLocalStorage';
+import NoteManager from '../../../storages/NoteManager';
+const initNotes = {
+  notes: {
+    byId: {},
+    all: [],
+    bookmarked: [],
+  },
+};
 const Note = () => {
-  const [notes, setNotes] = useState({});
+  const [noteData, setNoteData] = useLocalStorage('nutab_notes', initNotes);
+  const noteManager = new NoteManager(noteData);
+  const { notes } = noteData;
+
   const { visible, show, hide } = useVisible(false);
   const [target, setTarget] = useState(null);
-  const [order, setOrder] = useState([]);
   const listRef = useRef(null);
 
   const handleInsertEmptyNote = () => {
-    const updatedNotes = {
-      [Date.now()]: {
-        id: Date.now(),
-        title: '',
-        content: '',
-        bookmarked: false,
-      },
-      ...notes,
-    };
-    setNotes(updatedNotes);
-    noteStore.saveAll(updatedNotes);
+    noteManager.addNote({
+      id: Date.now(),
+      title: '',
+      content: '',
+      bookmarked: false,
+    });
+    setNoteData(noteManager.getData());
   };
-  const handleDeleteNote = (noteId) => {
-    const cloned = { ...notes };
-    delete cloned[noteId];
-    setNotes(cloned);
 
-    noteStore.delete(noteId);
+  const handleDeleteNote = (noteId) => {
+    noteManager.deleteNote(noteId);
+    setNoteData(noteManager.getData());
+  };
+
+  const handleUpdateNote = (note) => {
+    noteManager.updateNoteContent(note.id, note.title, note.content);
+    setNoteData(noteManager.getData());
   };
 
   const openConfirm = (noteId) => {
@@ -40,31 +48,20 @@ const Note = () => {
   };
 
   const toggleBookmarkNote = (noteId) => {
-    const updatedNote = { ...notes[noteId] };
-    const previousState = updatedNote.bookmarked;
-    // update notes
-    updatedNote.bookmarked = !previousState;
-    setNotes({
-      ...notes,
-      [noteId]: updatedNote,
-    });
-    noteStore.update(updatedNote);
-
-    // update order
-    let newOrder;
-    if (previousState === false) {
-      newOrder = [noteId, ...order];
-    } else {
-      newOrder = order.filter((id) => id !== noteId);
-    }
-
-    setOrder(newOrder);
-    noteStore.saveOrder(newOrder);
+    noteManager.toggleNoteBookmarked(noteId);
+    setNoteData(noteManager.getData());
   };
 
   useEffect(() => {
-    dragula([listRef.current], { ignoreInputTextSelection: false }).on('drop', (el, target) => {
-      noteStore.saveOrder(Array.from(listRef.current.children).map((element) => parseInt(element.id)));
+    dragula([listRef.current], {
+      ignoreInputTextSelection: true,
+      moves: function (el, container, handle) {
+        return handle.tagName !== 'INPUT';
+      },
+    }).on('drop', (el, target) => {
+      const newOrder = Array.from(listRef.current.children).map((element) => parseInt(element.id));
+      noteManager.setBookmarked(newOrder);
+      setNoteData(noteManager.getData());
     });
   }, []);
 
@@ -72,7 +69,7 @@ const Note = () => {
     return (
       <div className={classnames('edit', { bookmarked: note.bookmarked })} id={note.id}>
         <div className="edit-container">
-          <NoteEdit note={note} />
+          <NoteEdit note={note} updateCallback={(note) => handleUpdateNote(note)} />
           {!note.bookmarked && <span className={'icon-x note-icon close'} onClick={() => openConfirm(note.id)} />}
           <span
             className={classnames('icon-bookmark note-icon bookmark', { selected: note.bookmarked || false })}
@@ -82,11 +79,6 @@ const Note = () => {
       </div>
     );
   };
-
-  useEffect(() => {
-    setNotes(noteStore.loadAll());
-    setOrder(noteStore.loadOrder());
-  }, []);
 
   return (
     <div className={'note-container'}>
@@ -99,15 +91,15 @@ const Note = () => {
       <div className="icon icon-plus1 note-insert" onClick={handleInsertEmptyNote} />
       <div className="note-list">
         <div className="note-random">
-          {Object.keys(notes)
-            .filter((id) => !notes[id].bookmarked)
+          {notes.all
+            .filter((id) => !notes.byId[id].bookmarked)
             .map((noteKey) => (
-              <NoteEditContainer key={noteKey} note={notes[noteKey]} />
+              <NoteEditContainer key={noteKey} note={notes.byId[noteKey]} />
             ))}
         </div>
         <div className="note-bookmarked" ref={listRef}>
-          {order.map((noteKey) => (
-            <NoteEditContainer key={noteKey} note={notes[noteKey]} />
+          {notes.bookmarked.map((noteKey) => (
+            <NoteEditContainer key={noteKey} note={notes.byId[noteKey]} />
           ))}
         </div>
       </div>

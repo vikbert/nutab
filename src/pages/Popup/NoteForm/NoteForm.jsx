@@ -3,7 +3,6 @@ import NoteFactory from './NoteFactory';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import NoteManager from '../../../storages/NoteManager';
 import classnames from 'classnames';
-import { logPopup } from '../../../helpers/Logger';
 
 const moveCursorToEnd = (el) => {
   if (typeof el.selectionStart == 'number') {
@@ -19,10 +18,7 @@ const moveCursorToEnd = (el) => {
 const NoteForm = () => {
   const [noteData, setNoteData] = useLocalStorage('nutab_notes', {});
   const noteManager = new NoteManager(noteData);
-
   const lastNote = noteManager.getLastestNote();
-
-  console.log('lastNote', lastNote);
 
   const [isNew, setIsNew] = useState(lastNote === null);
   const [note, setNote] = useState(() => {

@@ -3,6 +3,7 @@ import NoteFactory from './NoteFactory';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import NoteManager from '../../../storages/NoteManager';
 import classnames from 'classnames';
+import { logPopup } from '../../../helpers/Logger';
 
 const moveCursorToEnd = (el) => {
   if (typeof el.selectionStart == 'number') {
@@ -14,14 +15,18 @@ const moveCursorToEnd = (el) => {
     range.select();
   }
 };
+
 const NoteForm = () => {
   const [noteData, setNoteData] = useLocalStorage('nutab_notes', {});
   const noteManager = new NoteManager(noteData);
+
   const lastNote = noteManager.getLastestNote();
+
+  console.log('lastNote', lastNote);
 
   const [isNew, setIsNew] = useState(lastNote === null);
   const [note, setNote] = useState(() => {
-    return lastNote ? lastNote : NoteFactory.create(lastNote.content);
+    return lastNote ? lastNote : NoteFactory.create();
   });
 
   const textRef = useRef();
@@ -38,7 +43,7 @@ const NoteForm = () => {
       return;
     }
 
-    if (isNew) {
+    if (isNew || lastNote === null) {
       noteManager.addNote(note);
     } else {
       noteManager.updateNoteContent(note.id, note.title, note.content);
@@ -59,12 +64,12 @@ const NoteForm = () => {
   }, []);
 
   useEffect(() => {
-    if (isNew) {
+    if (isNew || lastNote === null) {
       setNote(NoteFactory.create(''));
     } else {
       setNote(lastNote);
     }
-  }, [isNew]);
+  }, [isNew]); // ⚠️Don't add lastNote as Depencency because of infinit loop
 
   return (
     <div className="popup-form">
@@ -79,7 +84,7 @@ const NoteForm = () => {
       <div className="popup-body">
         <textarea
           ref={textRef}
-          value={note.content}
+          value={note.content || ''}
           onChange={handleChangeText}
           onKeyPress={handleKeyPress}
           placeholder="Enter your note"

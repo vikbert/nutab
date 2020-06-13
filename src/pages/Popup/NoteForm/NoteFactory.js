@@ -1,8 +1,8 @@
 const NoteFactory = {};
-NoteFactory.create = (content) => {
+NoteFactory.create = (content = null) => {
   return {
     id: new Date().getTime(),
-    content,
+    content: content || '',
     title: new Date().toLocaleDateString(),
     bookmarked: false,
   };

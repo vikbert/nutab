@@ -6,11 +6,19 @@ body {
 .pop-container {
   width: 414px;
   min-height: 100px;
+  font-size: 14px;
 }
-
 .popup-form {
   display: grid;
   grid-template-rows: 40px 1fr 40px;
+}
+.popup-header,
+.popup-footer {
+  font-size: 1.1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 .popup-header {
   border-bottom: 1px solid darkorange;
@@ -36,7 +44,7 @@ body {
   }
 }
 .popup-body {
-  padding: 10px;
+  padding: 10px 15px;
 }
 .popup-body textarea {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -44,17 +52,10 @@ body {
   border: 0;
   resize: none;
   width: 100%;
-  color: inherit;
+  color: #5a5959;
   font-size: 1em;
+  line-height: 1.4;
   outline: none;
-}
-.popup-header,
-.popup-footer {
-  font-size: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
 }
 .popup-footer {
   font-weight: bold;

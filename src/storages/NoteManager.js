@@ -152,6 +152,14 @@ class NoteManager {
   getAll() {
     return this.data.notes.all;
   }
+
+  getLastestNote() {
+    if (this.countAll() === 0) {
+      return null;
+    }
+
+    return this.getNote(this.data.notes.all.sort().reverse()[0]);
+  }
 }
 
 export default NoteManager;

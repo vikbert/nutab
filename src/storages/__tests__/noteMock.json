@@ -2,32 +2,32 @@
   "notes": {
     "byId": {
       "11": {
-        "id": "11",
+        "id": 11,
         "content": "content 11",
         "title": "title 11",
         "bookmarked": true
       },
       "22": {
-        "id": "22",
+        "id": 22,
         "content": "content 22",
         "title": "title 22",
         "bookmarked": true
       },
       "33": {
-        "id": "33",
+        "id": 33,
         "content": "content 33",
         "title": "title 33",
         "bookmarked": false
       }
     },
-    "all": ["11", "22", "33"],
-    "bookmarked": ["22", "11"]
+    "all": [11, 22, 33],
+    "bookmarked": [22, 11]
   },
   "colors": {
     "byId": {
       "11": "white",
       "22": "yellow"
     },
-    "allIds": ["11", "22"]
+    "allIds": [11, 22]
   }
 }

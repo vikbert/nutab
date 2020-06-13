@@ -2,13 +2,43 @@ body {
   margin: 0;
   padding: 0;
 }
+// this defined the size of default popup
 .pop-container {
   width: 414px;
   min-height: 100px;
-  background-color: #ffc;
 }
 
-.note-form textarea {
+.popup-form {
+  display: grid;
+  grid-template-rows: 40px 1fr 40px;
+}
+.popup-header {
+  border-bottom: 1px solid darkorange;
+
+  .item.active {
+    background-color: darkorange;
+    color: #fff;
+    &:hover {
+      color: #ffffff;
+      background-color: darkorange;
+    }
+  }
+  .item {
+    width: 50%;
+    height: 100%;
+    line-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    &:hover {
+      color: #000000;
+      background-color: rgb(253, 222, 184);
+    }
+  }
+}
+.popup-body {
+  padding: 10px;
+}
+.popup-body textarea {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   display: block;
   border: 0;
@@ -16,9 +46,25 @@ body {
   width: 100%;
   color: inherit;
   font-size: 1em;
-  outline: 0;
-  background-color: #ffc;
-  margin: 0 0 10px 0;
+  outline: none;
+}
+.popup-header,
+.popup-footer {
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.popup-footer {
+  font-weight: bold;
+  color: rgb(179, 101, 6);
+  border-top: 1px dotted darkorange;
+  &:hover {
+    cursor: pointer;
+    color: #fff;
+    background-color: darkorange;
+  }
 }
 .button-container {
   position: absolute;

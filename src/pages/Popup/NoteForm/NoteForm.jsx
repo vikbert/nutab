@@ -1,21 +1,51 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Article, Button } from 'react-weui';
-import noteStore from '../../../storages/NoteStore';
 import NoteFactory from './NoteFactory';
+import useLocalStorage from '../../../hooks/useLocalStorage';
+import NoteManager from '../../../storages/NoteManager';
+import classnames from 'classnames';
 
+const moveCursorToEnd = (el) => {
+  if (typeof el.selectionStart == 'number') {
+    el.selectionStart = el.selectionEnd = el.value.length;
+  } else if (typeof el.createTextRange != 'undefined') {
+    el.focus();
+    var range = el.createTextRange();
+    range.collapse(false);
+    range.select();
+  }
+};
 const NoteForm = () => {
+  const [noteData, setNoteData] = useLocalStorage('nutab_notes', {});
+  const noteManager = new NoteManager(noteData);
+  const lastNote = noteManager.getLastestNote();
+
+  const [isNew, setIsNew] = useState(lastNote === null);
+  const [note, setNote] = useState(() => {
+    return lastNote ? lastNote : NoteFactory.create(lastNote.content);
+  });
+
   const textRef = useRef();
-  const [content, setContent] = useState('');
 
   const handleChangeText = (event) => {
-    setContent(event.target.value);
+    setNote({
+      ...note,
+      content: event.target.value,
+    });
   };
 
   const handleSubmitNote = () => {
-    if (content.length) {
-      noteStore.add(NoteFactory.create(content));
-      window.close();
+    if (note.content.trim().length === 0) {
+      return;
     }
+
+    if (isNew) {
+      noteManager.addNote(note);
+    } else {
+      noteManager.updateNoteContent(note.id, note.title, note.content);
+    }
+
+    setNoteData(noteManager.getData());
+    window.close();
   };
 
   const handleKeyPress = (event) => {
@@ -25,26 +55,41 @@ const NoteForm = () => {
   };
 
   useEffect(() => {
-    textRef.current.focus();
+    moveCursorToEnd(textRef);
   }, []);
 
-  return (
-    <Article className={'note-form'}>
-      <textarea
-        ref={textRef}
-        value={content}
-        onChange={handleChangeText}
-        onKeyPress={handleKeyPress}
-        placeholder="Enter your note"
-        rows="20"
-      />
+  useEffect(() => {
+    if (isNew) {
+      setNote(NoteFactory.create(''));
+    } else {
+      setNote(lastNote);
+    }
+  }, [isNew]);
 
-      <div className="button-container">
-        <Button size="small" onClick={handleSubmitNote} plain>
-          Save Note (Enter)
-        </Button>
+  return (
+    <div className="popup-form">
+      <div className="popup-header">
+        <div onClick={() => setIsNew(false)} className={classnames('item', { active: !isNew })}>
+          Latest One
+        </div>
+        <div onClick={() => setIsNew(true)} className={classnames('item', { active: isNew })}>
+          New One
+        </div>
       </div>
-    </Article>
+      <div className="popup-body">
+        <textarea
+          ref={textRef}
+          value={note.content}
+          onChange={handleChangeText}
+          onKeyPress={handleKeyPress}
+          placeholder="Enter your note"
+          rows="20"
+        />
+      </div>
+      <div className="popup-footer" onClick={handleSubmitNote}>
+        <div>{'Save Note'}</div>
+      </div>
+    </div>
   );
 };
 

@@ -6,7 +6,7 @@ import useVisible from '../../../hooks/useVisible';
 import Confirm from '../../../components/Confirm';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import NoteManager from '../../../storages/NoteManager';
-import createEmptyNote from '../../../storages/NewNote';
+import { createEmptyNote } from '../../../storages/NoteCreator';
 const initNotes = {
   notes: {
     byId: {},

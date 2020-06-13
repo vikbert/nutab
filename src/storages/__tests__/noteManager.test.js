@@ -23,25 +23,25 @@ describe('NoteManager', () => {
   });
 
   it('getNote()', () => {
-    expect(manager.getNote('11').id).toEqual('11');
+    expect(manager.getNote(11).id).toEqual(11);
   });
 
   it('updateNoteContent()', () => {
     const newNote = {
-      id: '11',
+      id: 11,
       content: 'content 99',
       title: 'title 11',
       bookmarked: true,
     };
-    manager.updateNoteContent('11', 'title 11', 'content 99');
-    expect(manager.getNote('11')).toEqual(newNote);
+    manager.updateNoteContent(11, 'title 11', 'content 99');
+    expect(manager.getNote(11)).toEqual(newNote);
   });
 
   it('deleteNote()', () => {
-    manager.deleteNote('11');
+    manager.deleteNote(11);
 
     // note is removed from byId
-    expect(manager.getNote('11')).toEqual(undefined);
+    expect(manager.getNote(11)).toEqual(undefined);
 
     // id is removed from all[]
     expect(manager.countAll()).toEqual(2);
@@ -51,26 +51,26 @@ describe('NoteManager', () => {
   });
 
   it('toggleNoteBookmarked(ids)', () => {
-    expect(manager.getNote('11').bookmarked).toBeTruthy();
+    expect(manager.getNote(11).bookmarked).toBeTruthy();
     expect(manager.countBookmarked()).toEqual(2);
 
     // check bookmarked true => false
     manager.toggleNoteBookmarked('11');
-    expect(manager.getNote('11').bookmarked).toBeFalsy();
+    expect(manager.getNote(11).bookmarked).toBeFalsy();
     expect(manager.countBookmarked()).toEqual(1);
   });
 
   it('toggleNoteBookmarked(id)', () => {
     // check bookmarked false => true
-    manager.toggleNoteBookmarked('33');
+    manager.toggleNoteBookmarked(33);
     expect(manager.countBookmarked()).toEqual(3);
     expect(manager.countAll()).toEqual(3);
-    expect(manager.getNote('33').bookmarked).toEqual(true);
+    expect(manager.getNote(33).bookmarked).toEqual(true);
   });
 
   it('addNote(newNote)', () => {
     const note44 = {
-      id: '44',
+      id: 44,
       title: 'title 44',
       content: 'content 44',
       bookmarked: false,
@@ -82,7 +82,7 @@ describe('NoteManager', () => {
 
   it('addNote(newNote)', () => {
     const note55 = {
-      id: '55',
+      id: 55,
       title: 'title 55',
       content: 'content 55',
       bookmarked: true,
@@ -93,20 +93,29 @@ describe('NoteManager', () => {
   });
 
   it('setAll(ids)', () => {
-    const ids = ['11', '33', '22'];
+    const ids = [11, 33, 22];
     manager.setAll(ids);
   });
 
   it('setBookmarked(ids)', () => {
-    const ids = ['11', '22'];
+    const ids = [11, 22];
     manager.setBookmarked(ids);
   });
 
   it('getAll', () => {
-    expect(manager.getAll().toString()).toEqual(['11', '22', '33'].toString());
+    expect(manager.getAll().toString()).toEqual([11, 22, 33].toString());
   });
 
   it('getBookmarked', () => {
-    expect(manager.getBookmarked().toString()).toEqual(['22', '11'].toString());
+    expect(manager.getBookmarked().toString()).toEqual([22, 11].toString());
+  });
+
+  it('should return the lastes note, if length > 0', () => {
+    expect(manager.getLastestNote().id).toEqual(33);
+  });
+
+  it('should return the lastes note', () => {
+    const initManager = new NoteManager();
+    expect(initManager.getLastestNote()).toEqual(null);
   });
 });

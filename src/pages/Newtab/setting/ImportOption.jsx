@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import noteStore from '../../../storages/NoteStore';
-import todoStore, { saveTodos, loadTodos } from '../../../storages/TodoStore';
 import useVisible from '../../../hooks/useVisible';
 import Dialog from '../../../components/Dialog';
 import { Button } from 'react-weui';
+
+const key_notes = 'nutab_notes';
+const key_todos = 'nutab_todos';
 
 const ImportOption = () => {
   const [data, setData] = useState(null);
@@ -20,9 +21,8 @@ const ImportOption = () => {
   };
 
   const importToLocalStorage = () => {
-    const currentNotes = noteStore.loadAll();
-    noteStore.saveAll({ ...currentNotes, ...data[noteStore.key] });
-    saveTodos(data[todoStore.key]['todos'], data[todoStore.key]['order']);
+    localStorage.setItem(key_notes, JSON.stringify(data[key_notes]));
+    localStorage.setItem(key_todos, JSON.stringify(data[key_todos]));
 
     window.location.reload();
   };

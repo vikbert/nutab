@@ -11,19 +11,19 @@ class NoteManager {
       };
     }
     if (!noteData.hasOwnProperty('notes')) {
-      throw new Error('note data has no propery: [notes]');
+      throw new Error('Notes has no propery "notes" as root of notes data');
     }
 
     if (!noteData.notes.hasOwnProperty('byId')) {
-      throw new Error('note data has no propery: [byId]');
+      throw new Error('Notes has no propery "byId": {} for indexed notes');
     }
 
     if (!noteData.notes.hasOwnProperty('bookmarked')) {
-      throw new Error('note data has no propery: [bookmarked]');
+      throw new Error('Notes has no propery "bookmarked: []" for the array of bookmarked IDs');
     }
 
     if (!noteData.notes.hasOwnProperty('all')) {
-      throw new Error('note data has no propery: [all]');
+      throw new Error('Notes has no propery "all":[] for the array of all IDs');
     }
 
     this.data = JSON.parse(JSON.stringify(noteData));

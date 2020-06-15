@@ -24,9 +24,11 @@ chrome.browserAction.onClicked.addListener(() => {
 chrome.runtime.onMessage.addListener((request) => {
   if (request.importBookmarks) {
     logBookmarks('event listener: init import bookmarks');
-    chrome.bookmarks.getTree(BookmarkStore.importBookmarks);
+     chrome.bookmarks.getTree(BookmarkStore.importBookmarks);
   }
+
   if (request.tts) {
+    //TODO: send chrome message
     chrome.tts.speak(request.message, {
       lang: 'de-DE',
     });

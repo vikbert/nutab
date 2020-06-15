@@ -1,12 +1,13 @@
 import React from 'react';
-import noteStore from '../../../storages/NoteStore';
-import todoStore, { loadTodos } from '../../../storages/TodoStore';
+
+const key_notes = 'nutab_notes';
+const key_todos = 'nutab_todos';
 
 const ExportOption = () => {
   const downloadFile = async () => {
     const nutabData = {
-      [noteStore.key]: noteStore.loadAll(),
-      [todoStore.key]: loadTodos(),
+      [key_notes]: JSON.parse(localStorage.getItem(key_notes)),
+      [key_todos]: JSON.parse(localStorage.getItem(key_todos)),
     };
     const current = new Date();
     const fileName = `nubtab_export_${current.toLocaleDateString()}_${current.toLocaleTimeString()}`;

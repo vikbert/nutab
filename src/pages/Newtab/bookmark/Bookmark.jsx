@@ -23,7 +23,6 @@ const Bookmark = ({ active }) => {
   };
 
   const loadUrl = (url) => {
-    window.close();
     window.open(url);
   };
 
@@ -33,10 +32,7 @@ const Bookmark = ({ active }) => {
 
   return (
     <div className="bookmark-container" ref={bookmarkRootRef}>
-      <Search
-        changeCallback={(text) => handleChangeSearch(text)}
-        submitCallback={(text) => handlePressEnter(text)}
-      />
+      <Search changeCallback={(text) => handleChangeSearch(text)} submitCallback={(text) => handlePressEnter(text)} />
 
       <div
         className="list-container"
@@ -49,6 +45,7 @@ const Bookmark = ({ active }) => {
           <span>Found</span>
           <span className="result-amount">{bookmarks.length}</span>
           <span>Entries</span>
+          <div>group</div>
         </CellsTitle>
         <Cells>
           {bookmarks.map((element, index) => (

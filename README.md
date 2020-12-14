@@ -28,6 +28,7 @@
 
 
 <img src="nutab.png"/>
+<img src="nutab-2.png"/>
 
 ---
 
@@ -45,7 +46,10 @@ load the extension from the location `build`, see more about [how to install chr
 ```
 
 ## essential features
-- ✅ Manage the Todos 
+- ✅ Manage the Todos
+  - drag and drop to sort the todos
+  - bookmark the important todos
+  - filter todos
 - ✅ quick search for bookmarkes
 - ✅ Count down alert: 5, 10, 25 minutes
 - ✅ export all data as json

@@ -45,7 +45,6 @@ const Bookmark = ({ active }) => {
           <span>Found</span>
           <span className="result-amount">{bookmarks.length}</span>
           <span>Entries</span>
-          <div>group</div>
         </CellsTitle>
         <Cells>
           {bookmarks.map((element, index) => (

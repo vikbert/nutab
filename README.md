@@ -31,4 +31,25 @@
 
 ---
 
+## install extension
+load the extension from the location `build`, see more about [how to install chrome extension from local files](https://www.youtube.com/watch?v=WUwjqwTzUkI)
+
+## getting start with development
+```bash
+ npm run start 
+```
+
+## build the extension
+```bash
+ npm run build 
+```
+
+## essential features
+- ✅ Manage the Todos 
+- ✅ quick search for bookmarkes
+- ✅ Count down alert: 5, 10, 25 minutes
+- ✅ export all data as json
+- ✅ import all data from json backup
+
+
 

@@ -18,12 +18,5 @@
   "icons": {
     "128": "icon-34.png"
   },
-  "content_scripts": [
-    {
-      "matches": ["http://*/*", "<all_urls>"],
-      "js": ["contentScript.bundle.js"],
-      "css": ["content.styles.css"]
-    }
-  ],
-  "web_accessible_resources": ["content.styles.css", "icon-34.png"]
+  "web_accessible_resources": ["icon-34.png"]
 }

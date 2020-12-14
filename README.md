@@ -1,6 +1,6 @@
 <div align="center">
   <!-- Logo and title and sub-title -->
-  <img src="logo.png" alt="logo" width="120"/>
+  <img src="images/logo.png" alt="logo" width="120"/>
   <h1 style="font-weight: bolder; color: black; margin-top: 0px">
     NuTab
   </h1>
@@ -27,8 +27,8 @@
 </div>
 
 
-<img src="nutab.png"/>
-<img src="nutab-2.png"/>
+<img src="images/nutab.png"/>
+<img src="images/nutab-2.png"/>
 
 ---
 
